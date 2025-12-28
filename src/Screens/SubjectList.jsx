@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,67 +8,63 @@ import {
   Image,
   StyleSheet,
   StatusBar,
+  ActivityIndicator
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const teachers = [
-  {
-    id: '1',
-    name: 'Aditya Kumar Gupta',
-    subject: 'I.T.',
-    image: 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png',
-    phone: '1234567890',
-    email: 'aditya@ips.edu.in',
-    qualification: 'B.Tech (IT), M.Sc (CS)',
-    experience: '5 Years of Teaching Experience',
-  },
-  {
-    id: '2',
-    name: 'Ajeet Kumar',
-    subject: 'S.St (Geo.)',
-    image: 'https://cdn-icons-png.flaticon.com/512/4140/4140037.png',
-    phone: '9876543210',
-    email: 'ajeet@ips.edu.in',
-    qualification: 'M.A. (Geography), B.Ed',
-    experience: '8 Years of Teaching Experience',
-  },
-  {
-    id: '3',
-    name: 'Mary Priyanka',
-    subject: 'English Language',
-    image: 'https://cdn-icons-png.flaticon.com/512/4140/4140057.png',
-    phone: '9999999999',
-    email: 'mary@ips.edu.in',
-    qualification: 'M.A. (English), B.Ed',
-    experience: '6 Years of Teaching Experience',
-  },
-];
+// YOUR API URL
+const API_URL = "https://international-public-sch-db945-default-rtdb.firebaseio.com/teacher.json";
 
 const SubjectTeacherScreen = ({ navigation }) => {
-  const [search, setSearch] = useState('');
 
+  // 🔥 Hooks at TOP (Correct)a
+  const [teachers, setTeachers] = useState([]);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+
+      console.log("ORIGINAL DATA:", data);
+
+      // Convert object to array
+      const loaded = Object.keys(data).map(key => ({
+        id: key,
+        ...data[key]
+      }));
+
+      console.log("LOADED ARRAY:", loaded);
+
+      setTeachers(loaded);
+      setLoading(false);
+    })
+    .catch(err => {
+      console.error("Fetch Error:", err);
+      setLoading(false);
+    });
+}, []);
+
+  // 🔍 Filter
   const filteredTeachers = teachers.filter(t =>
-    t.name.toLowerCase().includes(search.toLowerCase())
-  );
+  t.fullName?.toLowerCase().includes(search.toLowerCase())
+);
+
 
   const renderTeacher = ({ item }) => (
     <TouchableOpacity
       activeOpacity={0.8}
-      onPress={() => navigation.navigate('TeacherInfo', { teacher: item })} // 👉 Pass teacher data
     >
-      <LinearGradient
-        colors={['#ffffff', '#f9fafb']}
-        style={styles.card}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
+      <LinearGradient colors={['#ffffff', '#f9fafb']} style={styles.card}>
         <View style={styles.avatarWrap}>
-          <Image source={{ uri: item.image }} style={styles.avatar} />
+          <Image source={{ uri: item.photoURL }} style={styles.avatar} />
         </View>
 
         <View style={styles.infoContainer}>
-          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.name}>{item.fullName}</Text>
+
           <View style={styles.subjectTag}>
             <Text style={styles.subjectText}>{item.subject}</Text>
           </View>
@@ -80,8 +76,9 @@ const SubjectTeacherScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient colors={['#0f6aa5', '#005f73']} style={styles.header}>
+      <LinearGradient colors={['#083f66', '#083f66']} style={styles.header}>
         <StatusBar backgroundColor="#005f73" barStyle="light-content" />
+
         <View style={styles.headerRow}>
           <TouchableOpacity style={styles.backIcon} onPress={() => navigation.goBack()}>
             <Icon name="arrow-left" size={26} color="#fff" />
@@ -101,14 +98,18 @@ const SubjectTeacherScreen = ({ navigation }) => {
         </View>
       </LinearGradient>
 
-      {/* Teacher List */}
-      <FlatList
-        data={filteredTeachers}
-        keyExtractor={item => item.id}
-        renderItem={renderTeacher}
-        contentContainerStyle={styles.listContainer}
-        ListEmptyComponent={<Text style={styles.emptyText}>No teachers found</Text>}
-      />
+      {/* Loader */}
+      {loading ? (
+        <ActivityIndicator size="large" color="#005f73" style={{ marginTop: 50 }} />
+      ) : (
+        <FlatList
+          data={filteredTeachers}
+          keyExtractor={item => item.id}
+          renderItem={renderTeacher}
+          contentContainerStyle={styles.listContainer}
+          ListEmptyComponent={<Text style={styles.emptyText}>No teachers found</Text>}
+        />
+      )}
     </View>
   );
 };
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   avatarWrap: { backgroundColor: '#E0F2FE', padding: 5, borderRadius: 60 },
-  avatar: { width: 65, height: 65, borderRadius: 40 },
+  avatar: { width: 80, height: 80, borderRadius: 40 },
   infoContainer: { flex: 1, marginLeft: 14 },
   name: { fontSize: 17, fontWeight: '700', color: '#111827' },
   subjectTag: {

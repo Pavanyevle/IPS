@@ -96,14 +96,8 @@ const DeveloperProfileScreen = () => {
         {/* Avatar */}
         <Animated.View style={[styles.avatarWrap, { transform: [{ scale: avatarScale }] }]}>
           <View style={styles.avatarShadow}>
-            <Image source={{ uri: AVATAR_URI }} style={styles.avatar} />
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.editBadge}
-              onPress={() => alert('Edit avatar clicked')}
-            >
-              <MaterialIcons name="edit" size={16} color="#fff" />
-            </TouchableOpacity>
+            <Image source={require('../Img/pavan.jpeg')} style={styles.avatar} />
+           
           </View>
         </Animated.View>
 
@@ -119,7 +113,7 @@ const DeveloperProfileScreen = () => {
 
           <View style={styles.infoRow}>
             <MaterialIcons name="email" size={18} color="#0078d7" />
-            <Text style={styles.infoText}> pavan.yevle@example.com</Text>
+            <Text style={styles.infoText}> pavanyevle6@gmail.com</Text>
           </View>
 
           <View style={styles.infoRow}>
@@ -180,12 +174,7 @@ const DeveloperProfileScreen = () => {
             ))}
           </View>
 
-          <TouchableOpacity activeOpacity={0.9} onPress={handleContact} style={styles.contactBtnWrap}>
-            <LinearGradient colors={['#ffb703', '#fb8500']} style={styles.contactBtn}>
-              <MaterialIcons name="mail-outline" size={18} color="#fff" />
-              <Text style={styles.contactText}>Say Hello</Text>
-            </LinearGradient>
-          </TouchableOpacity>
+         
         </Animated.View>
 
         <Text style={styles.footerNote}>© {new Date().getFullYear()} Pavan Yevle </Text>

@@ -5,16 +5,22 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  TouchableOpacity,
   StatusBar,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const AboutUs = () => {
+const AboutUs = ({navigation}) => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0f6aa5" />
-
+      <View style={styles.headerRow}>
+        <TouchableOpacity style={styles.backIcon} onPress={() => navigation.goBack()}>
+          <Icon name="arrow-left" size={26} color="#494343ff" />
+        </TouchableOpacity>
+      </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Logo & School Name */}
         <View style={styles.logoSection}>
@@ -104,64 +110,64 @@ const AboutUs = () => {
           </View>
         </View>
 
-       {/* Messages Section */}
-<View style={styles.section}>
-  <Text style={styles.sectionTitle}>CHAIRMAN’S MESSAGE</Text>
+        {/* Messages Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>CHAIRMAN’S MESSAGE</Text>
 
-  <Image
-    source={require('../Img/Chairman.jpg')}
-    style={styles.personImage}
-  />
-  <Text style={styles.personName}>Er. Manohar Kumar </Text>
-  <Text style={styles.personDesignation}>(Chairman) </Text>
+          <Image
+            source={require('../Img/Chairman.jpg')}
+            style={styles.personImage}
+          />
+          <Text style={styles.personName}>Er. Manohar Kumar </Text>
+          <Text style={styles.personDesignation}>(Chairman) </Text>
 
-  <Text style={styles.quote}>“Learning knowledge is path of success” </Text>
-  <Text style={styles.paragraph}>
-    Learning knowledge is path of success and the beginning of wisdom simply means curiosity
-    drives us to question, learn, and grow. At IPS, we help children develop the four pillars
-    of learning — Knowledge, Skills, Disposition, and Feelings. Every teacher at IPS nurtures
-    young minds with dedication and passion.
-  </Text>
-</View>
+          <Text style={styles.quote}>“Learning knowledge is path of success” </Text>
+          <Text style={styles.paragraph}>
+            Learning knowledge is path of success and the beginning of wisdom simply means curiosity
+            drives us to question, learn, and grow. At IPS, we help children develop the four pillars
+            of learning — Knowledge, Skills, Disposition, and Feelings. Every teacher at IPS nurtures
+            young minds with dedication and passion.
+          </Text>
+        </View>
 
-<View style={styles.section}>
-  <Text style={styles.sectionTitle}>MANAGING DIRECTOR'S MESSAGE</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>MANAGING DIRECTOR'S MESSAGE</Text>
 
-  <Image
-    source={require('../Img/Ramsir.jpg')}
-    style={styles.personImage}
-  />
-  <Text style={styles.personName}>Er. Ram S. </Text>
-  <Text style={styles.personDesignation}>(Managing Director) </Text>
-  <Text style={styles.personQualification}>M.Tech (CSE), M.Sc (Math) </Text>
+          <Image
+            source={require('../Img/Ramsir.jpg')}
+            style={styles.personImage}
+          />
+          <Text style={styles.personName}>Er. Ram S. </Text>
+          <Text style={styles.personDesignation}>(Managing Director) </Text>
+          <Text style={styles.personQualification}>M.Tech (CSE), M.Sc (Math) </Text>
 
-  <Text style={styles.quote}>“Think Different” </Text>
-  <Text style={styles.paragraph}>
-    I would like to welcome you to IPS where accomplishments meet a vibrant campus atmosphere.
-    We expect our students to push themselves academically, intellectually, and socially to
-    prepare for leadership in a global society. We encourage compassion, excellence, and teamwork.
-  </Text>
-</View>
+          <Text style={styles.quote}>“Think Different” </Text>
+          <Text style={styles.paragraph}>
+            I would like to welcome you to IPS where accomplishments meet a vibrant campus atmosphere.
+            We expect our students to push themselves academically, intellectually, and socially to
+            prepare for leadership in a global society. We encourage compassion, excellence, and teamwork.
+          </Text>
+        </View>
 
-<View style={styles.section}>
-  <Text style={styles.sectionTitle}>PRINCIPAL’S MESSAGE </Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>PRINCIPAL’S MESSAGE </Text>
 
-  <Image
-    source={require('../Img/Principal.jpg')}
-    style={styles.personImage}
-  />
-  <Text style={styles.personName}>Er. Madhumita K. Madhuwal </Text>
-  <Text style={styles.personDesignation}>(Principal)</Text>
-  <Text style={styles.personQualification}>MCA, M.Sc (Chem), Civil Engg., B.Ed </Text>
+          <Image
+            source={require('../Img/Principal.jpg')}
+            style={styles.personImage}
+          />
+          <Text style={styles.personName}>Er. Madhumita K. Madhuwal </Text>
+          <Text style={styles.personDesignation}>(Principal)</Text>
+          <Text style={styles.personQualification}>MCA, M.Sc (Chem), Civil Engg., B.Ed </Text>
 
-  <Text style={styles.quote}>“Wonder is the beginning of wisdom” </Text>
-  <Text style={styles.paragraph}>
-    At IPS, we believe in growth, excellence, innovation, and diversity. Our teachers foster
-    holistic development and encourage cultural inclusion through arts, languages, and community
-    service. We aim to create an environment where every student feels valued and prepared for
-    a lifetime of learning.
-  </Text>
-</View>
+          <Text style={styles.quote}>“Wonder is the beginning of wisdom” </Text>
+          <Text style={styles.paragraph}>
+            At IPS, we believe in growth, excellence, innovation, and diversity. Our teachers foster
+            holistic development and encourage cultural inclusion through arts, languages, and community
+            service. We aim to create an environment where every student feels valued and prepared for
+            a lifetime of learning.
+          </Text>
+        </View>
 
 
         {/* Footer */}
@@ -179,43 +185,43 @@ const AboutUs = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f9f9f9' },
 
-  logoSection: { alignItems: 'center', marginTop: 60 },
-  logo: { width: 140, height: 100, borderRadius: 45, marginBottom: 8 },
+  logoSection: { alignItems: 'center',  },
+  logo: { width: 140, height: 100,marginBottom: 8 },
   schoolName: { fontSize: 20, fontWeight: '700', color: '#0f6aa5' },
   established: { fontSize: 13, color: '#777' },
 
   personImage: {
-  width: 110,
-  height: 110,
-  borderRadius: 55,
-  alignSelf: 'center',
-  marginVertical: 8,
-  borderWidth: 2,
-  borderColor: '#0f6aa5',
-},
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    alignSelf: 'center',
+    marginVertical: 8,
+    borderWidth: 2,
+    borderColor: '#0f6aa5',
+  },
 
-personName: {
-  fontSize: 17,
-  fontWeight: '700',
-  color: '#0f6aa5',
-  textAlign: 'center',
-  marginTop: 4,
-},
+  personName: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#0f6aa5',
+    textAlign: 'center',
+    marginTop: 4,
+  },
 
-personDesignation: {
-  fontSize: 14,
-  fontWeight: '600',
-  color: '#555',
-  textAlign: 'center',
-  marginBottom: 2,
-},
+  personDesignation: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#555',
+    textAlign: 'center',
+    marginBottom: 2,
+  },
 
-personQualification: {
-  fontSize: 13,
-  color: '#777',
-  textAlign: 'center',
-  marginBottom: 8,
-},
+  personQualification: {
+    fontSize: 13,
+    color: '#777',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
 
   card: {
     backgroundColor: '#fff',
@@ -307,6 +313,13 @@ personQualification: {
 
   footer: { marginTop: 30, alignItems: 'center', marginBottom: 30 },
   footerText: { color: '#888', fontSize: 12, textAlign: 'center', marginVertical: 2 },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: '#393030ff', marginLeft: 14 },
+  backIcon: { backgroundColor: '#1b0f0f33', borderRadius: 30, marginLeft:15,padding: 5,marginTop:40 },
 });
 
 export default AboutUs;

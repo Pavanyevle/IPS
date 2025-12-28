@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,70 +7,85 @@ import {
   StyleSheet,
   ScrollView,
   StatusBar,
-} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+} from "react-native";
+import LinearGradient from "react-native-linear-gradient";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import axios from "axios";
 
-const routineData = {
-  Monday: [
-    { id: '1', teacher: 'Aditya Kumar Gupta', subject: 'I.T.', time: '8:10AM - 8:55AM',  },
-    { id: '2', teacher: 'Mr. Mahesh Pd. Singh', subject: 'Maths', time: '8:55AM - 9:35AM',  },
-    { id: '3', teacher: 'Mary Priyanka', subject: 'English Language', time: '9:45AM - 10:20AM',  },
-    { id: '4', teacher: 'Ajeet Kumar', subject: 'S.St (Geo.)', time: '10:20AM - 10:55AM',  },
-    { id: '5', teacher: 'Mary Priyanka', subject: 'Moral', time: '11:15AM - 11:50AM', },
-    { id: '6', teacher: 'Miss Sushan Lepcha', subject: 'Chemistry', time: '11:50AM - 12:25PM',  },
-    { id: '7', teacher: 'Arun Kumar Poddar', subject: 'Physics', time: '12:25PM - 1:00PM',  },
-  ],
-  Tuesday:  [
-    { id: '1', teacher: 'Aditya Kumar Gupta', subject: 'I.T.', time: '8:10AM - 8:55AM',  },
-    { id: '2', teacher: 'Mr. Mahesh Pd. Singh', subject: 'Maths', time: '8:55AM - 9:35AM',  },
-    { id: '3', teacher: 'Mary Priyanka', subject: 'English Language', time: '9:45AM - 10:20AM',  },
-    { id: '4', teacher: 'Ajeet Kumar', subject: 'S.St (Geo.)', time: '10:20AM - 10:55AM',  },
-    { id: '5', teacher: 'Mary Priyanka', subject: 'Moral', time: '11:15AM - 11:50AM', },
-    { id: '6', teacher: 'Miss Sushan Lepcha', subject: 'Chemistry', time: '11:50AM - 12:25PM',  },
-    { id: '7', teacher: 'Arun Kumar Poddar', subject: 'Physics', time: '12:25PM - 1:00PM',  },
-  ],
-  Wednesday: [],
-  Thursday: [],
-  Friday: [],
-  Saturday: [],
-  Sunday: [],
-};
 
-const days = Object.keys(routineData);
+const ClassRoutineScreen = ({ navigation ,route}) => {
+  const [routineData, setRoutineData] = useState({});
+  const [selectedDay, setSelectedDay] = useState("");
+  const [loading, setLoading] = useState(true);
+  const Class = route.params?.class;
+const API_URL =
+  `https://international-public-sch-db945-default-rtdb.firebaseio.com/class/${Class}/routine.json`;
 
-const ClassRoutineScreen = ({ navigation }) => {
-  const [selectedDay, setSelectedDay] = useState('Monday');
+  // 🔹 Fetch Routine
+  const fetchRoutine = async () => {
+    try {
+      const res = await axios.get(API_URL);
 
-  const renderCard = ({ item, index }) => (
-    <View style={styles.card}>
-      <LinearGradient
-        colors={['#eef6f9', '#ffffff']}
-        style={styles.cardInner}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <View style={styles.leftCircle}>
-          <Text style={styles.periodNum}>{index + 1}</Text>
-        </View>
+      if (res.data) {
+        setRoutineData(res.data);
+        const firstDay = Object.keys(res.data)[0];
+        setSelectedDay(firstDay);
+      } else {
+        setRoutineData({});
+      }
+    } catch (error) {
+      console.log("Routine Fetch Error:", error);
+    }
+    setLoading(false);
+  };
 
-        <View style={styles.cardContent}>
-          <View style={styles.subjectRow}>
-            <Icon name={item.icon} size={22} color="#0a9396" style={{ marginRight: 6 }} />
-            <Text style={styles.subject}>{item.subject}</Text>
-          </View>
-          <Text style={styles.teacher}>{item.teacher}</Text>
-          <Text style={styles.time}>{item.time}</Text>
-        </View>
-      </LinearGradient>
-    </View>
-  );
+  useEffect(() => {
+    fetchRoutine();
+  }, []);
+
+  const days = Object.keys(routineData || {});
+
+  // 🔹 Sort Periods
+  const getSortedPeriods = () => {
+    if (!routineData[selectedDay]) return [];
+
+    return Object.keys(routineData[selectedDay])
+      .sort((a, b) => Number(a) - Number(b))
+      .map((key) => routineData[selectedDay][key])
+      .filter((item) => item && item.subject);
+  };
+
+  // 🔹 Table Row
+  const renderRow = ({ item, index }) => {
+    if (!item) return null;
+
+    return (
+      <View style={styles.tableRow}>
+        <Text style={[styles.cell, { flex: 0.8 }]}>
+          {index + 1}
+        </Text>
+
+        <Text style={[styles.cell, styles.subjectCell, { flex: 2 }]}>
+          {item.subject}
+        </Text>
+
+        <Text style={[styles.cell, { flex: 1.6 }]}>
+          {item.teacher}
+        </Text>
+
+        <Text style={[styles.cell, styles.timeCell, { flex: 1.2 }]}>
+          {item.time}
+        </Text>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
-      {/* HEADER */}
-      <LinearGradient colors={['#0f6aa5', '#0f6aa5']} style={styles.header}>
-        <StatusBar barStyle="light-content" backgroundColor="#005f73" />
+      {/* 🔹 HEADER */}
+      <LinearGradient colors={["#083f66", "#083f66"]} style={styles.header}>
+        <StatusBar barStyle="light-content" backgroundColor="#083f66" />
+
         <View style={styles.headerTop}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon name="arrow-left" size={26} color="#fff" />
@@ -78,13 +93,13 @@ const ClassRoutineScreen = ({ navigation }) => {
           <Text style={styles.headerTitle}>Class Routine</Text>
         </View>
 
-        {/* SCROLLABLE DAYS */}
+        {/* 🔹 DAY TABS */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.tabRow}
         >
-          {days.map(day => (
+          {days.map((day) => (
             <TouchableOpacity
               key={day}
               onPress={() => setSelectedDay(day)}
@@ -106,44 +121,74 @@ const ClassRoutineScreen = ({ navigation }) => {
         </ScrollView>
       </LinearGradient>
 
-      {/* CLASS LIST */}
-      <FlatList
-        data={routineData[selectedDay]}
-        keyExtractor={item => item.id}
-        renderItem={renderCard}
-        contentContainerStyle={styles.listContainer}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>No classes scheduled for {selectedDay}</Text>
-        }
-      />
+      {/* 🔹 TABLE */}
+      {loading ? (
+        <Text style={styles.emptyText}>Loading...</Text>
+      ) : (
+        <FlatList
+          data={getSortedPeriods()}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderRow}
+          ListHeaderComponent={
+            <View style={styles.tableHeader}>
+              <Text style={[styles.cell, styles.headerCell, { flex: 0.8 }]}>
+                Period
+              </Text>
+              <Text style={[styles.cell, styles.headerCell, { flex: 2 }]}>
+                Subject
+              </Text>
+              <Text style={[styles.cell, styles.headerCell, { flex: 1.6 }]}>
+                Teacher
+              </Text>
+              <Text style={[styles.cell, styles.headerCell, { flex: 1.2 }]}>
+                Time
+              </Text>
+            </View>
+          }
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>
+              No classes scheduled for {selectedDay}
+            </Text>
+          }
+          contentContainerStyle={{ paddingBottom: 30 }}
+        />
+      )}
     </View>
   );
 };
 
+export default ClassRoutineScreen;
+
+/* 🔹 STYLES */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f6f8fa',
+    backgroundColor: "#f6f8fa",
   },
+
+  /* HEADER */
   header: {
     paddingTop: 45,
     paddingHorizontal: 16,
-    paddingBottom: 18,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
-    elevation: 5,
+    paddingBottom: 16,
+   
+    elevation: 6,
+        height:140,
+
   },
   headerTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 14,
   },
   headerTitle: {
     fontSize: 22,
-    fontWeight: '700',
-    color: '#fff',
+    fontWeight: "700",
+    color: "#fff",
     marginLeft: 16,
   },
+
+  /* TABS */
   tabRow: {
     paddingRight: 16,
     paddingLeft: 4,
@@ -153,79 +198,62 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginRight: 10,
     borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: "rgba(255,255,255,0.15)",
   },
   tabButtonActive: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   tabText: {
-    color: '#d9f0f7',
+    color: "#d9f0f7",
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   tabTextActive: {
-    color: '#0a9396',
-    fontWeight: '700',
+    color: "#0a9396",
+    fontWeight: "700",
   },
-  listContainer: {
+
+  /* TABLE */
+  tableHeader: {
+    flexDirection: "row",
+    backgroundColor: "#0f6aa5",
+    marginHorizontal: 12,
+    marginTop: 14,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+  },
+  tableRow: {
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    marginHorizontal: 12,
+    borderBottomWidth: 1,
+    borderColor: "#e5e7eb",
+  },
+  cell: {
     paddingVertical: 12,
+    paddingHorizontal: 6,
+    fontSize: 14,
+    color: "#111827",
+    textAlign: "center",
   },
-  card: {
-    marginHorizontal: 16,
-    marginVertical: 7,
-    borderRadius: 18,
-    elevation: 5,
-    backgroundColor: '#fff',
-  },
-  cardInner: {
-    borderRadius: 18,
-    padding: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  leftCircle: {
-    backgroundColor: '#bd3888ff',
-    width: 40,
-    height: 40,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-    elevation: 3,
-  },
-  periodNum: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  cardContent: {
-    flex: 1,
-  },
-  subjectRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 2,
-  },
-  subject: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#001219',
-  },
-  teacher: {
+  headerCell: {
+    color: "#fff",
+    fontWeight: "700",
     fontSize: 15,
-    color: '#495057',
   },
-  time: {
-    color: '#6c757d',
-    fontSize: 13,
-    marginTop: 2,
+  subjectCell: {
+    fontWeight: "600",
+    color: "#001219",
   },
+  timeCell: {
+    color: "#0a9396",
+    fontWeight: "600",
+  },
+
   emptyText: {
-    textAlign: 'center',
-    color: '#6c757d',
+    textAlign: "center",
+    color: "#6c757d",
     marginTop: 60,
     fontSize: 16,
   },
 });
-
-export default ClassRoutineScreen;

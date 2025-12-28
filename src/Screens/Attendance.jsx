@@ -70,7 +70,7 @@ const AttendanceScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* HEADER */}
-      <LinearGradient colors={['#0f6aa5', '#0f6aa5']} style={styles.header}>
+      <LinearGradient colors={['#083f66', '#083f66']} style={styles.header}>
         <View style={styles.headerContent}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -139,12 +139,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F9FA',
   },
   header: {
-    backgroundColor:'#0f6aa5',
+    backgroundColor:'#083f66',
     paddingVertical: 25,
     paddingHorizontal: 15,
     paddingTop:50,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
+       height:120,
+
     elevation: 10,
   },
   headerContent: {
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: '#fff',
-    fontSize: 18,
+    fontSize:25,
     fontWeight: 'bold',
   },
   headerSubtitle: {

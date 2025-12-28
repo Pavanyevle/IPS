@@ -105,13 +105,46 @@ const StudentProfileScreen = ({ navigation }) => {
 
         {/* INFO CARDS */}
         <View style={styles.card}>
+          <Feather name="file-text" size={20} color="#0f6aa5" />
+          <View style={styles.cardText}>
+            <Text style={styles.label}>Admission No</Text>
+            <Text style={styles.value}>{student.admissionNumber}</Text>
+          </View>
+        </View>
+
+        <View style={styles.card}>
           <Feather name="user" size={20} color="#0f6aa5" />
           <View style={styles.cardText}>
             <Text style={styles.label}>Full Name</Text>
             <Text style={styles.value}>{student.name}</Text>
           </View>
         </View>
+        <View style={styles.card}>
+          <MaterialCommunityIcons
+            name="account-tie"
+            size={22}
+            color="#0f6aa5"
+          />
+          <View style={styles.cardText}>
+            <Text style={styles.label}>Father Name</Text>
+            <Text style={styles.value}>{student.fatherName}</Text>
+          </View>
+        </View>
 
+        <View style={styles.card}>
+          <AntDesign name="calendar" size={20} color="#0f6aa5" />
+          <View style={styles.cardText}>
+            <Text style={styles.label}>Date of Birth</Text>
+            <Text style={styles.value}>{student.dob}</Text>
+          </View>
+        </View>
+        <View style={styles.card}>
+          <MaterialCommunityIcons name="gender-male-female" size={20} color="#0f6aa5" />
+          <View style={styles.cardText}>
+            <Text style={styles.label}>Gender</Text>
+            <Text style={styles.value}>{student.gender}</Text>
+          </View>
+        </View>
         <View style={styles.card}>
           <Feather name="phone" size={20} color="#0f6aa5" />
           <View style={styles.cardText}>
@@ -127,21 +160,9 @@ const StudentProfileScreen = ({ navigation }) => {
             <Text style={styles.value}>{student.email}</Text>
           </View>
         </View>
-        <View style={styles.card}>
-          <MaterialCommunityIcons name="gender-male-female" size={20} color="#0f6aa5" />
-          <View style={styles.cardText}>
-            <Text style={styles.label}>Gender</Text>
-            <Text style={styles.value}>{student.gender}</Text>
-          </View>
-        </View>
 
-        <View style={styles.card}>
-          <AntDesign name="calendar" size={20} color="#0f6aa5" />
-          <View style={styles.cardText}>
-            <Text style={styles.label}>Date of Birth</Text>
-            <Text style={styles.value}>{student.dob}</Text>
-          </View>
-        </View>
+
+
 
         <View style={styles.card}>
           <Feather name="map-pin" size={20} color="#0f6aa5" />
@@ -172,17 +193,17 @@ const styles = StyleSheet.create({
 
   },
   header: {
-    height: 100,
+    height: 120,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
-    paddingBottom: 15,
+    paddingBottom: 25,
     elevation: 8,
   },
   headerTitle: {
     color: '#fff',
-    fontSize: 22,
+    fontSize: 25,
     fontWeight: '700',
   },
   backBtn: {

@@ -1,91 +1,141 @@
-import React,{ useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Modal
+  Modal,
+  Image,
+  Alert ,
+  ActivityIndicator
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import BottomTab from './BottomTab';
 import AppHeader from '../components/UI/AppHeader';
+import BottomTab from './BottomTab';
+import axios from 'axios';
 
-const NoticeScreen = ({ navigation }) => {
-    const [menuVisible, setMenuVisible] = useState(false);
-  
-  const notices = [
-    {
-      date: '17 Oct, 2025 08:21 AM',
-      type: 'All',
-      title: 'Notice',
-      message: `Dear Parents and Students,
-• There will be PTM and result distribution on 18/10/2025 (8am-11am). 
-• Holiday on Diwali and Chhath: 20/10/2025 to 29/10/2025.
-• Classes resume from 30/10/2025 (same timing).`,
-      messageHindi: `प्रिय अभिभावकों और छात्राओं,
-• 18/10/2025 को पी.टी.एम. और रिपोर्ट कार्ड वितरण होगा।
-• दीवाली और छठ पूजा के अवसर पर 20/10/2025 से 29/10/2025 तक अवकाश रहेगा।
-• कक्षाएँ 30/10/2025 से पुनः प्रारंभ होंगी।`,
-      downloadable: true,
-    },
-    {
-      date: '14 Oct, 2025 09:59 AM',
-      type: 'All',
-      title: 'Notice',
-      message: `प्रिय अभिभावकों और विद्यार्थियों, सूचित किया जाता है कि टाई आ गया है, आप fee office से ले सकते हैं।`,
-      downloadable: false,
-    },
-  ];
+const NoticeScreen = ({ navigation,route }) => {
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [notices, setNotices] = useState([]);
+  const [loading, setLoading] = useState(true);
+    const student = route.params?.student;
+
+
+  const API_URL = "https://international-public-sch-db945-default-rtdb.firebaseio.com/class/10/notice.json";
+
+  useEffect(() => {
+    fetchNotices();
+  }, []);
+
+  const fetchNotices = async () => {
+    try {
+      const res = await axios.get(API_URL);
+
+      if (res.data) {
+        // Firebase object → array convert
+        const formatted = Object.values(res.data);
+        setNotices(formatted);
+      } else {
+        setNotices([]);
+      }
+
+    } catch (err) {
+      console.log("Error fetching notices:", err);
+    }
+
+    setLoading(false);
+  };
+const confirmLogout = () => {
+  Alert.alert(
+    'Confirm Logout',
+    'Are you sure you want to logout?',
+    [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await AsyncStorage.clear();
+            setMenuVisible(false);
+
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Login' }],
+            });
+          } catch (e) {
+            console.log('Logout Error:', e);
+          }
+        },
+      },
+    ],
+    { cancelable: true }
+  );
+};
+
 
   return (
     <View style={styles.container}>
       <AppHeader title="Notice" onMenuPress={() => setMenuVisible(true)} />
 
+      {/* Loading */}
+      {loading ? (
+        <ActivityIndicator size="large" color="#F97316" style={{ alignItems: 'center', justifyContent: 'center', flex: 1, marginTop: 200 }} />
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}
+          style={styles.scrollArea}
+        >
+          {notices.length === 0 ? (
+            <Text style={{ textAlign: 'center', marginTop: 30, color: '#6B7280' }}>
+              No notices available
+            </Text>
+          ) : (
+            notices.map((item, index) => (
+              <View key={index} style={styles.card}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.date}>{item.date}</Text>
+                  <Text style={styles.type}>{item.type}</Text>
+                </View>
 
-      {/* SCROLL AREA */}
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
-        style={styles.scrollArea}>
-        {notices.map((item, index) => (
-          <View key={index} style={styles.card}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.date}>{item.date}</Text>
-              <Text style={styles.type}>{item.type}</Text>
-            </View>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.message}>{item.message}</Text>
 
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.message}>{item.message}</Text>
-            {item.messageHindi && (
-              <Text style={styles.messageHindi}>{item.messageHindi}</Text>
-            )}
+                {item.messageHindi && (
+                  <Text style={styles.messageHindi}>{item.messageHindi}</Text>
+                )}
 
-            {item.downloadable && (
-              <TouchableOpacity style={styles.downloadBtn}>
-                <MaterialCommunityIcons
-                  name="download-outline"
-                  size={18}
-                  color="#004D60"
-                />
-                <Text style={styles.downloadText}>Download</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        ))}
-      </ScrollView>
+                {item.file && (
+                  <TouchableOpacity
+                    style={styles.downloadBtn}
+                    onPress={() => {
 
-      {/* VIEW ALL BUTTON */}
+                    }}
+                  >
+                    <MaterialCommunityIcons name="download-outline" size={18} color="#004D60" />
+                    <Text style={styles.downloadText}>Download</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))
+          )}
+        </ScrollView>
+      )}
+
+      {/* VIEW ALL */}
       <TouchableOpacity style={styles.viewAllBtn}>
         <LinearGradient colors={['#F97316', '#FB923C']} style={styles.gradientBtn}>
           <Text style={styles.viewAllText}>VIEW ALL</Text>
         </LinearGradient>
       </TouchableOpacity>
-            <BottomTab navigation={navigation} />
 
- <Modal
+      <BottomTab navigation={navigation} />
+
+      <Modal
         visible={menuVisible}
         transparent
         animationType="fade"
@@ -101,23 +151,24 @@ const NoticeScreen = ({ navigation }) => {
               colors={['#0f6aa5', '#2a99d8', '#6dd5fa']}
               style={styles.modalBox}
             >
-              {/* School Logo */}
+
               <View style={styles.logoWrap}>
                 <View style={styles.logoCircle}>
-                  <MaterialCommunityIcons name="school" size={42} color="#fff" />
-                </View>
+                  <Image
+                    source={require('../Img/ips1.png')}
+                    style={styles.modalLogo}
+                    resizeMode="contain"
+                  />            </View>
               </View>
 
-              {/* School Name */}
               <Text style={styles.schoolName}>International Public School</Text>
               <View style={styles.separator} />
 
-              {/* Menu Items */}
               {[
                 { label: 'My Profile', icon: 'account-circle-outline', screen: 'MyProfile' },
                 { label: 'About Us', icon: 'information-outline', screen: 'AboutUs' },
                 { label: 'Help & Support', icon: 'headset', screen: 'HelpAndSupport' },
-                { label: 'Developed & Designed By', icon: 'code-tags', screen: 'Developer' },
+                // { label: 'Developed & Designed By', icon: 'code-tags', screen: 'Developer' },
               ].map((item, index) => (
                 <TouchableOpacity
                   key={index}
@@ -134,13 +185,10 @@ const NoticeScreen = ({ navigation }) => {
 
               <View style={styles.separator} />
 
-              {/* Logout */}
+
               <TouchableOpacity
                 style={[styles.modalItem, { justifyContent: 'space-between' }]}
-                onPress={() => {
-                  setMenuVisible(false);
-                  navigation.navigate('Login');
-                }}
+                onPress={confirmLogout}
               >
                 <Text style={[styles.modalItemText, { color: 'red' }]}>Logout</Text>
                 <MaterialCommunityIcons name="logout" size={22} color="red" />
@@ -163,7 +211,7 @@ const styles = StyleSheet.create({
   header: {
     paddingVertical: 20,
     paddingHorizontal: 15,
-   
+
     elevation: 6,
     paddingTop: 50,
   },
@@ -288,18 +336,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
+  modalLogo: {
+    width: 150,
+    height: 150,
+  },
 
   logoCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#fff',
-    marginBottom: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
   },
+
 
   schoolName: {
     fontSize: 18,

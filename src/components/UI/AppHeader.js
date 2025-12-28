@@ -13,7 +13,7 @@ const AppHeader = ({ title, onMenuPress }) => {
       <TouchableOpacity onPress={onMenuPress} style={styles.menuButton}>
         <Entypo name="menu" size={30} color="#f4efefff" />
       </TouchableOpacity>
-      <View style={{ flex: 1, alignItems: 'center' }}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' ,alignSelf:'center'}}>
         <Text style={styles.title}>{title}</Text>
       </View>
       
@@ -25,16 +25,17 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0f6aa5',
+    backgroundColor: '#083f66',
     padding: 14,
-    height:100,
+    height:120,
   },
   title: {
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
     marginTop:30,
-    fontSize:22,
+    fontSize:25,
+    alihnSelf:'center',
   },
   menuButton: {
     padding: 4,

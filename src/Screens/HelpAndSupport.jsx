@@ -24,14 +24,14 @@ const HelpSupportScreen = ({ navigation }) => {
 
       {/* Header */}
       <LinearGradient
-        colors={['#0072ff', '#00c6ff']}
+        colors={['#083f66', '#083f66']}
         style={styles.header}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.headerRow}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
+            <MaterialCommunityIcons name="arrow-left" size={30} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Help & Support</Text>
           <View style={{ width: 24 }} />
@@ -114,19 +114,18 @@ const HelpSupportScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#f5f9ff' },
   header: {
-    height: 100,
+    height: 120,
     justifyContent: 'flex-end',
     paddingHorizontal: 18,
-    paddingBottom: 16,
-    borderBottomLeftRadius: 18,
-    borderBottomRightRadius: 18,
+    paddingBottom: 30,
+    
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '700' },
+  headerTitle: { color: '#fff', fontSize: 25, fontWeight: '700' },
 
   section: { marginBottom: 20 },
   sectionTitle: { fontSize: 17, fontWeight: '700', color: '#222' },

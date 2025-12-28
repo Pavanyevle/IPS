@@ -18,10 +18,11 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 const { width } = Dimensions.get('window');
 const FIREBASE_URL = 'https://international-public-sch-db945-default-rtdb.firebaseio.com/';
+
 const LoginScreen = ({ navigation }) => {
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -29,8 +30,8 @@ const LoginScreen = ({ navigation }) => {
 
   // Animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-  const logoScale = useRef(new Animated.Value(0.9)).current;
+  const slideAnim = useRef(new Animated.Value(0)).current;
+  const logoScale = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Entrance animations
@@ -55,66 +56,63 @@ const LoginScreen = ({ navigation }) => {
   }, []);
 
   const createFirebaseKey = (id) => {
-    return id.replace(/[.#$[\]]/g, '_'); // Firebase मध्ये invalid characters replace करा
+    return id.replace(/[.#$[\]]/g, '_');
   };
+
   const handleSignIn = async () => {
+
     if (!email || !password) {
       alert('Please fill all fields');
       return;
     }
-
     setIsLoading(true);
     const userId = createFirebaseKey(email);
 
     try {
-  const response = await axios.get(`${FIREBASE_URL}students/${userId}.json`);
-  console.log('User ID:', userId);
-  console.log('Firebase URL:', `${FIREBASE_URL}students/${userId}.json`);
-  console.log('Response:', response.data);
+      const response = await axios.get(`${FIREBASE_URL}students/${userId}.json`);
 
-  if (!response.data || Object.keys(response.data).length === 0) {
-    alert('User not found. Please signup first!');
-    setIsLoading(false);
-    return;
-  }
+      if (!response.data || Object.keys(response.data).length === 0) {
+        alert('User not found. Please signup first!');
+        setIsLoading(false);
+        return;
+      }
 
-  if (response.data.password === password) {
-    setIsLoading(false);
-    Toast.show({
-      type: 'success',
-      text1: 'Login Successful',
-      position: 'bottom',
-    });
-    await AsyncStorage.setItem('userData', JSON.stringify({
-      email: email,
-      password: password,
-    }));
-    navigation.navigate('Home');
-  } else {
-    setIsLoading(false);
-    alert('Incorrect password. Try again!');
-  }
-} catch (error) {
-  console.log('Login error:', error);
-  setIsLoading(false);
-  alert('Login failed. Try again!');
-}
+      if (response.data.password === password) {
+        setIsLoading(false);
 
+        await AsyncStorage.setItem('userData', JSON.stringify({
+          email: email,
+          password: password,
+        }));
+
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        });
+
+        Toast.show({
+          type: 'success',
+          text1: 'Login Successful',
+          position: 'bottom',
+        });
+      } else {
+        setIsLoading(false);
+        alert('Incorrect password. Try again!');
+      }
+    } catch (error) {
+      console.log('Login error:', error);
+      setIsLoading(false);
+      alert('Login failed. Try again!');
+    }
   };
 
   return (
     <View style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
+      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+
         <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
+        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <Animated.View
             style={[
               styles.content,
@@ -125,16 +123,10 @@ const LoginScreen = ({ navigation }) => {
             ]}
           >
             {/* Header Section */}
-            <Animated.View
-              style={[styles.headerSection, { transform: [{ scale: logoScale }] }]}
-            >
+            <Animated.View style={[styles.headerSection, { transform: [{ scale: logoScale }] }]}>
               <View style={styles.logoContainer}>
                 <View style={styles.logoWrapper}>
-                  <Image
-                    source={require('../Img/IPS.png')}
-                    style={styles.logo}
-                    resizeMode="contain"
-                  />
+                  <Image source={require('../Img/IPS.png')} style={styles.logo} resizeMode="contain" />
                 </View>
                 <Text style={styles.appName}>IPS</Text>
               </View>
@@ -202,14 +194,6 @@ const LoginScreen = ({ navigation }) => {
               <TouchableOpacity style={styles.forgotPasswordContainer}>
                 <Text style={styles.forgotPassword}>Forgot Password?</Text>
               </TouchableOpacity>
-
-              {/* Sign Up Link
-              <View style={styles.signupRow}>
-                <Text style={styles.signupText}>Don't have an account?</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                  <Text style={styles.signupLink}> Sign Up</Text>
-                </TouchableOpacity>
-              </View> */}
             </View>
           </Animated.View>
         </ScrollView>
